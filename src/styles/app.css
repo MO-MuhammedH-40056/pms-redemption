@@ -122,7 +122,7 @@ body {
 .app-body {
   display: grid;
   grid-template-columns: 300px 1fr 340px;
-  grid-template-rows: 1fr;       /* row height = container height, not auto */
+  grid-template-rows: minmax(0, 1fr);  /* minmax(0) lets tracks shrink below content min-height so children can scroll */
   flex: 1;
   overflow: hidden;
   gap: 0;
