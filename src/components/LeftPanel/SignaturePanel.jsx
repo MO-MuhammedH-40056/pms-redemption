@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   ShieldCheck, ShieldX, Shield, RefreshCw, Loader2,
-  AlertTriangle, RotateCcw, CheckCircle,
+  AlertTriangle, RotateCcw, CheckCircle, GitCompare,
 } from 'lucide-react';
 import useWorkflowStore from '../../store/workflowStore';
 import { isImageFile } from '../../skills/fileConverter';
@@ -154,12 +154,23 @@ export default function SignaturePanel({ orchestrator }) {
         )}
 
         {originalError && (
-          <div className="sig-error-hint">
-            <AlertTriangle size={11} />
-            {sigOriginalError || 'Could not fetch original signature.'}
-            <br />
-            <strong>Edit PAN / Account Code in the form above, then click Reload.</strong>
-          </div>
+          <>
+            <div className="sig-error-hint">
+              <AlertTriangle size={11} />
+              {sigOriginalError || 'Could not fetch original signature.'}
+              <br />
+              <strong>Edit PAN / Account Code in the form above, then click Reload.</strong>
+            </div>
+            <button
+              className="reverify-btn"
+              onClick={() => orchestrator?.compareOnly()}
+              disabled={sigState === 'loading'}
+              title="Skip fetching original and run comparison anyway"
+            >
+              <GitCompare size={11} className={sigState === 'loading' ? 'spin' : ''} />
+              Compare Anyway
+            </button>
+          </>
         )}
       </div>
 

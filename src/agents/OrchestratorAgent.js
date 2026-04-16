@@ -170,6 +170,12 @@ export class OrchestratorAgent {
     }
   }
 
+  // ─── Compare-only (skip fetching original, use whatever is on record) ──────
+
+  async compareOnly() {
+    await this.signature.reVerify();
+  }
+
   // ─── Chat user message ────────────────────────────────────────────────────
 
   async handleUserMessage(userText) {

@@ -357,7 +357,6 @@ body {
 .file-card {
   border: 1px solid var(--gray-200);
   border-radius: var(--radius);
-  overflow: hidden;
   background: var(--white);
   animation: fadeIn 0.3s ease;
 }
@@ -555,7 +554,6 @@ body {
 .signature-panel {
   border: 1px solid var(--gray-200);
   border-radius: var(--radius);
-  overflow: hidden;
   animation: fadeIn 0.3s ease;
 }
 
