@@ -260,8 +260,9 @@ body {
   overflow-x: hidden;
   padding: 16px;
   gap: 12px;
-  /* Grid items default to min-height:auto which prevents scroll — override it */
-  min-height: 0;
+  height: 100%;       /* resolves to the grid cell height, making overflow-y: auto fire */
+  min-height: 0;      /* prevents content from pushing the cell taller */
+  box-sizing: border-box;
 }
 
 .panel-section-title {
