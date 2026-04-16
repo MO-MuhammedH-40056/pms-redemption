@@ -57,6 +57,8 @@ export class OrchestratorAgent {
       this.store.getState();
 
     // Capture token at start — if a new file is uploaded mid-flow, token changes and we abort
+    if (!uploadedFile) return;
+
     const capturedToken = processToken;
     const isCancelled = () => this.store.getState().processToken !== capturedToken;
 
