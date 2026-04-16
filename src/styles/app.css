@@ -259,6 +259,8 @@ body {
   overflow-x: hidden;
   padding: 16px;
   gap: 12px;
+  /* Grid items default to min-height:auto which prevents scroll — override it */
+  min-height: 0;
 }
 
 .panel-section-title {

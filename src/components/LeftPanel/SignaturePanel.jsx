@@ -6,6 +6,10 @@ import {
 import useWorkflowStore from '../../store/workflowStore';
 import { isImageFile } from '../../skills/fileConverter';
 
+// Placeholder shown when the original signature cannot be fetched (e.g. CORS)
+const DUMMY_SIG_SRC =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='70' viewBox='0 0 160 70'%3E%3Crect width='160' height='70' fill='%23f8fafc'/%3E%3Cpath d='M12 52 C22 28,32 18,44 34 C52 44,58 48,68 32 C76 18,84 14,96 30 C106 44,114 50,128 38 C136 30,144 28,152 34' stroke='%2394a3b8' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ctext x='80' y='65' text-anchor='middle' font-family='sans-serif' font-size='8' fill='%23cbd5e1' letter-spacing='1'%3ENOT AVAILABLE%3C/text%3E%3C/svg%3E";
+
 // ─── Single signature image slot ─────────────────────────────────────────────
 function SigImageBox({ label, src, loading, errorMsg, emptyMsg }) {
   const [imgError, setImgError] = useState(false);
@@ -173,9 +177,9 @@ export default function SignaturePanel({ orchestrator }) {
         />
         <SigImageBox
           label="Original on Record"
-          src={origSrc}
+          src={originalError ? DUMMY_SIG_SRC : origSrc}
           loading={originalLoading}
-          errorMsg={originalError ? (sigOriginalError || 'Not found') : null}
+          errorMsg={null}
           emptyMsg={sigOriginalState === 'idle' ? 'Pending extraction' : null}
         />
       </div>
