@@ -34,15 +34,20 @@ export async function callApi(url, body, timeoutMs = DEFAULT_TIMEOUT) {
       throw new Error(`HTTP ${response.status}: ${rawText || response.statusText}`);
     }
 
-    // Try to parse as JSON regardless of content-type header
+    // Try to parse as JSON regardless of content-type header.
+    // Some APIs return Python-style single-quoted dicts — normalise to double quotes as fallback.
     let parsed;
     try {
       parsed = JSON.parse(rawText);
       console.log('Parsed JSON:', parsed);
     } catch {
-      // Not JSON — return raw text
-      console.log('Response is plain text (not JSON)');
-      parsed = rawText;
+      try {
+        parsed = JSON.parse(rawText.replace(/'/g, '"'));
+        console.log('Parsed JSON (single-quote normalised):', parsed);
+      } catch {
+        console.log('Response is plain text (not JSON)');
+        parsed = rawText;
+      }
     }
 
     console.groupEnd();
