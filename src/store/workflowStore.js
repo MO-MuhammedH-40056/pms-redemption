@@ -32,10 +32,16 @@ const useWorkflowStore = create((set, get) => ({
   extractedData: null,
   formData: null,
 
+  // Process token — increments on every new file so old async chains self-abort
+  processToken: 0,
+
   // Signature
-  sigVerification: null,   // { Accuracy, IsMatch }
-  originalSignature: null, // { FILENAME, FILE }
-  sigState: 'idle',        // 'idle' | 'loading' | 'done' | 'error'
+  sigVerification: null,      // { Accuracy, IsMatch }
+  originalSignature: null,    // { FILENAME, FILE }
+  sigOriginalState: 'idle',   // 'idle' | 'loading' | 'done' | 'error'
+  sigOriginalError: null,     // error string when original fetch fails
+  sigVerifyState: 'idle',     // 'idle' | 'loading' | 'done' | 'error'
+  sigState: 'idle',           // overall: 'idle' | 'loading' | 'done' | 'error'
 
   // Chat
   messages: [],
@@ -57,22 +63,28 @@ const useWorkflowStore = create((set, get) => ({
 
   // ACTIONS
   setFile: (file, base64, url) =>
-    set({
+    set((state) => ({
       uploadedFile: file,
       uploadedFileBase64: base64,
       uploadedFileURL: url,
       sessionId: generateSessionId(),
+      processToken: state.processToken + 1,  // cancels any in-flight async chain
       extractedData: null,
       formData: null,
       sigVerification: null,
       originalSignature: null,
       sigState: 'idle',
+      sigOriginalState: 'idle',
+      sigOriginalError: null,
+      sigVerifyState: 'idle',
       workflowState: 'idle',
+      isProcessing: false,
       progress: { percent: 0, step: '' },
-    }),
+      messages: [],          // clear chat for fresh session
+    })),
 
   clearFile: () =>
-    set({
+    set((state) => ({
       uploadedFile: null,
       uploadedFileBase64: null,
       uploadedFileURL: null,
@@ -81,11 +93,16 @@ const useWorkflowStore = create((set, get) => ({
       sigVerification: null,
       originalSignature: null,
       sigState: 'idle',
+      sigOriginalState: 'idle',
+      sigOriginalError: null,
+      sigVerifyState: 'idle',
       workflowState: 'idle',
       isProcessing: false,
       progress: { percent: 0, step: '' },
+      processToken: state.processToken + 1,
       sessionId: generateSessionId(),
-    }),
+      messages: [],
+    })),
 
   setWorkflowState: (state) => set({ workflowState: state }),
   setIsProcessing: (v) => set({ isProcessing: v }),
@@ -108,6 +125,8 @@ const useWorkflowStore = create((set, get) => ({
   setSigVerification: (result) => set({ sigVerification: result }),
   setOriginalSignature: (sig) => set({ originalSignature: sig }),
   setSigState: (s) => set({ sigState: s }),
+  setSigOriginalState: (s, err = null) => set({ sigOriginalState: s, sigOriginalError: err }),
+  setSigVerifyState: (s) => set({ sigVerifyState: s }),
 
   addMessage: (type, text) =>
     set((state) => ({

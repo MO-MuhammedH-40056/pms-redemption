@@ -31,40 +31,41 @@ const SKELETON = (
   </>
 );
 
+const EMPTY_STATE = (
+  <div style={{ gridColumn: 'span 2', padding: '20px 0', textAlign: 'center', color: 'var(--gray-400)' }}>
+    <FileText size={28} style={{ opacity: 0.3, marginBottom: 8 }} />
+    <p style={{ fontSize: 12 }}>Upload a document and run the AI Agent to populate fields</p>
+  </div>
+);
+
 export default function RedemptionForm({ orchestrator }) {
-  const { formData, workflowState, updateFormField, showToast } =
+  const { formData, workflowState, uploadedFile, updateFormField, showToast } =
     useWorkflowStore((s) => ({
       formData: s.formData,
       workflowState: s.workflowState,
+      uploadedFile: s.uploadedFile,
       updateFormField: s.updateFormField,
       showToast: s.showToast,
     }));
 
-  const isIdle = ['idle', 'extracting', 'verifying'].includes(workflowState);
+  // Show skeleton only while actively extracting (file is uploaded & agent running)
+  const isExtracting = workflowState === 'extracting';
+  // Show empty placeholder when no file has been uploaded yet
+  const noFile = !uploadedFile;
+  // Show form sections when data exists (even during verifying/reviewing)
+  const hasData = !!formData;
+
   const canSubmit = workflowState === 'reviewing';
   const isSubmitting = workflowState === 'submitting';
   const isSuccess = workflowState === 'success';
 
   const upd = (path) => (val) => updateFormField(path, val);
 
-  // Determine section statuses
-  const sec1Status = isIdle
-    ? 'pending'
-    : getSectionStatus(formData, ['request_type', 'date']);
-
-  const sec2Status = isIdle
-    ? 'pending'
-    : getSectionStatus(formData, ['account_code', 'first_account_holder_name', 'pan_card_no']);
-
-  const sec3Status = isIdle
-    ? 'pending'
-    : formData
-    ? 'filled'
-    : 'pending';
-
-  const sec4Status = isIdle
-    ? 'pending'
-    : getSectionStatus(formData, [
+  // Section statuses — use data presence, not workflow state
+  const sec1Status = !hasData ? 'pending' : getSectionStatus(formData, ['request_type', 'date']);
+  const sec2Status = !hasData ? 'pending' : getSectionStatus(formData, ['account_code', 'first_account_holder_name', 'pan_card_no']);
+  const sec3Status = !hasData ? 'pending' : 'filled';
+  const sec4Status = !hasData ? 'pending' : getSectionStatus(formData, [
         'bank_details.bank_name',
         'bank_details.account_number',
         'bank_details.ifsc_code',
@@ -124,7 +125,7 @@ export default function RedemptionForm({ orchestrator }) {
           sectionNumber={1}
           status={isSubmitting ? 'processing' : sec1Status}
         >
-          {isIdle ? (
+          {noFile ? EMPTY_STATE : isExtracting ? (
             SKELETON
           ) : (
             <>
@@ -163,7 +164,7 @@ export default function RedemptionForm({ orchestrator }) {
           sectionNumber={2}
           status={isSubmitting ? 'processing' : sec2Status}
         >
-          {isIdle ? (
+          {noFile ? EMPTY_STATE : isExtracting ? (
             SKELETON
           ) : (
             <>
@@ -199,7 +200,7 @@ export default function RedemptionForm({ orchestrator }) {
           sectionNumber={3}
           status={isSubmitting ? 'processing' : sec3Status}
         >
-          {isIdle ? (
+          {noFile ? EMPTY_STATE : isExtracting ? (
             SKELETON
           ) : (
             <>
@@ -298,7 +299,7 @@ export default function RedemptionForm({ orchestrator }) {
           sectionNumber={4}
           status={isSubmitting ? 'processing' : sec4Status}
         >
-          {isIdle ? (
+          {noFile ? EMPTY_STATE : isExtracting ? (
             SKELETON
           ) : (
             <>

@@ -1,5 +1,6 @@
 export const API_CONFIG = {
-  extraction: 'https://motilaloswal-dev.outsystems.app/PMSRedemptionDataExtraction/rest/Redemption/Red_DataExtraction',
+  extraction:  'https://motilaloswal-dev.outsystems.app/PMSRedemptionDataExtraction/rest/Redemption/Red_DataExtraction',
+  clearData:   'https://motilaloswal-dev.outsystems.app/PMSRedemptionDataExtraction/rest/Redemption/ClearData',
   signatureVerify: 'https://motilaloswal-dev.outsystems.app/PMSRedemptionSignatureVerify/rest/Redemption/Red_SignatureVerify',
   originalSignature: 'https://monextdev.motilaloswal.com/PMSAPIService/rest/RedemptionAPI/GetOriginalSignature',
   submitRequest: 'https://monextdev.motilaloswal.com/PMSAPIService/rest/RedemptionAPI/Red_Request',

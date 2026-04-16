@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { OrchestratorAgent } from './agents/OrchestratorAgent';
 import useWorkflowStore from './store/workflowStore';
 import TopBar from './components/TopBar/TopBar';
@@ -10,12 +10,17 @@ import EmailModal from './components/modals/EmailModal';
 import Toast from './components/common/Toast';
 
 export default function App() {
-  // Create OrchestratorAgent once — pass the Zustand store object
+  // Single orchestrator instance for the app lifetime
   const orchestratorRef = useRef(null);
   if (!orchestratorRef.current) {
     orchestratorRef.current = new OrchestratorAgent(useWorkflowStore);
   }
   const orchestrator = orchestratorRef.current;
+
+  // On mount: clear AI backend memory so every session starts fresh
+  useEffect(() => {
+    orchestrator.clearAiMemory();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="app-root">
@@ -28,7 +33,7 @@ export default function App() {
         {/* Center Column — Redemption Form */}
         <RedemptionForm orchestrator={orchestrator} />
 
-        {/* Right Column — Chat */}
+        {/* Right Column — AI Chat */}
         <ChatInterface orchestrator={orchestrator} />
       </div>
 
