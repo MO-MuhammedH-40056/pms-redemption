@@ -3,7 +3,7 @@ export const API_CONFIG = {
   clearData:   'https://motilaloswal-dev.outsystems.app/PMSRedemptionDataExtraction/rest/Redemption/ClearData',
   signatureVerify: 'https://motilaloswal-dev.outsystems.app/PMSRedemptionSignatureVerify/rest/Redemption/Red_SignatureVerify',
   originalSignature: 'https://monextdev.motilaloswal.com/PMSAPIService/rest/RedemptionAPI/GetOriginalSignature',
-  submitRequest: 'https://monextdev.motilaloswal.com/PMSAPIService/rest/RedemptionAPI/Red_Request',
+  submitRequest: 'https://motilaloswal-dev.outsystems.app/PMSRedemptionDataExtraction/rest/RESTAPI1/RESTAPIMethod1',
   sendEmail: 'https://monextdev.motilaloswal.com/PMSAPIService/rest/SendEmail/REST_API_SendEmail',
   summarizer: 'https://motilaloswal-dev.outsystems.app/PMSRedemptionSummmarizer/rest/Redemption/Red_DataSummarizer',
 };
