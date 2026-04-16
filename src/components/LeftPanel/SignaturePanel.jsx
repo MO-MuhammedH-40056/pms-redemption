@@ -6,9 +6,21 @@ import {
 import useWorkflowStore from '../../store/workflowStore';
 import { isImageFile } from '../../skills/fileConverter';
 
-// Placeholder shown when the original signature cannot be fetched (e.g. CORS)
-const DUMMY_SIG_SRC =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='70' viewBox='0 0 160 70'%3E%3Crect width='160' height='70' fill='%23f8fafc'/%3E%3Cpath d='M12 52 C22 28,32 18,44 34 C52 44,58 48,68 32 C76 18,84 14,96 30 C106 44,114 50,128 38 C136 30,144 28,152 34' stroke='%2394a3b8' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ctext x='80' y='65' text-anchor='middle' font-family='sans-serif' font-size='8' fill='%23cbd5e1' letter-spacing='1'%3ENOT AVAILABLE%3C/text%3E%3C/svg%3E";
+// Inline placeholder shown when the original signature cannot be fetched (e.g. CORS)
+function DummySig() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="140" height="60" viewBox="0 0 140 60" style={{ display: 'block' }}>
+      <rect width="140" height="60" fill="#f8fafc" rx="4" />
+      <path
+        d="M10 46 C18 26,28 16,40 32 C48 42,54 46,64 30 C72 16,80 12,92 28 C102 42,110 48,124 36 C130 29,136 28,138 30"
+        stroke="#94a3b8" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round"
+      />
+      <text x="70" y="57" textAnchor="middle" fontFamily="sans-serif" fontSize="7" fill="#cbd5e1" letterSpacing="1.2">
+        NOT AVAILABLE
+      </text>
+    </svg>
+  );
+}
 
 // ─── Single signature image slot ─────────────────────────────────────────────
 function SigImageBox({ label, src, loading, errorMsg, emptyMsg }) {
@@ -175,13 +187,27 @@ export default function SignaturePanel({ orchestrator }) {
           errorMsg={!docSrc ? 'PDF — no inline preview' : null}
           emptyMsg="Upload an image file"
         />
-        <SigImageBox
-          label="Original on Record"
-          src={originalError ? DUMMY_SIG_SRC : origSrc}
-          loading={originalLoading}
-          errorMsg={null}
-          emptyMsg={sigOriginalState === 'idle' ? 'Pending extraction' : null}
-        />
+        {/* Original on Record — show dummy inline SVG on CORS/error, avoid data URL issues */}
+        <div className="sig-slot">
+          <div className="sig-slot-label">Original on Record</div>
+          <div className={`sig-slot-box ${originalLoading ? 'loading' : ''}`}>
+            {originalLoading ? (
+              <Loader2 size={18} className="spin" style={{ color: 'var(--gray-400)' }} />
+            ) : originalError ? (
+              <DummySig />
+            ) : origSrc ? (
+              <img
+                src={origSrc}
+                alt="Original on Record"
+                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+              />
+            ) : (
+              <span style={{ fontSize: 11, color: 'var(--gray-400)' }}>
+                {sigOriginalState === 'idle' ? 'Pending extraction' : 'Pending'}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* Accuracy bar — only when compare is done */}
