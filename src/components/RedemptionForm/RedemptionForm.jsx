@@ -350,7 +350,7 @@ export default function RedemptionForm({ orchestrator }) {
       {/* Footer */}
       <div className="form-footer">
         <div className="form-footer-info">
-          {isIdle && 'Upload a document and run the AI agent to populate this form.'}
+          {(noFile || workflowState === 'idle') && 'Upload a document and run the AI agent to populate this form.'}
           {workflowState === 'extracting' && 'Extracting fields from document...'}
           {workflowState === 'verifying' && 'Running signature verification...'}
           {workflowState === 'reviewing' && 'Please review all fields before submitting.'}
