@@ -46,7 +46,7 @@ export default function TopBar() {
           <div className="topbar-user-avatar">
             <User size={13} />
           </div>
-          <span>PMS Operations</span>
+          <span>Mhd Ibrahim</span>
         </div>
       </div>
     </header>
