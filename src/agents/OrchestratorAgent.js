@@ -102,7 +102,25 @@ export class OrchestratorAgent {
     setWorkflowState('reviewing');
     setIsProcessing(false);
 
-    const { sigVerification, sigOriginalState } = this.store.getState();
+    const { sigVerification, sigOriginalState, formData: currentFormData, openEmailModal } = this.store.getState();
+
+    // Auto-open email editor on signature issues so user can escalate
+    if (sigOriginalState === 'error') {
+      const errorDetail = 'Original signature could not be fetched — PAN or Account Code may be incorrect.';
+      openEmailModal({
+        to: DEFAULT_EMAIL,
+        subject: `PMS Redemption - Signature Fetch Failed - ${extractedData.account_code}`,
+        body: buildEmailBody(errorDetail, currentFormData),
+      });
+    } else if (sigVerification && !sigVerification.IsMatch) {
+      const errorDetail = `Signature mismatch detected (${sigVerification.Accuracy}% accuracy). Manual review required.`;
+      openEmailModal({
+        to: DEFAULT_EMAIL,
+        subject: `PMS Redemption - Signature Mismatch - ${extractedData.account_code}`,
+        body: buildEmailBody(errorDetail, currentFormData),
+      });
+    }
+
     const summarizerInput = [
       `Document extraction and signature verification complete.`,
       `Account: ${extractedData.account_code}, PAN: ${extractedData.pan_card_no},`,
@@ -111,9 +129,11 @@ export class OrchestratorAgent {
       sigVerification
         ? `Signature: ${sigVerification.IsMatch ? 'Matched' : 'Mismatched'} at ${sigVerification.Accuracy}%.`
         : sigOriginalState === 'error'
-          ? 'Original signature could not be fetched — user needs to review PAN/Account Code.'
+          ? 'Original signature could not be fetched. Email editor has been opened to escalate.'
           : '',
-      'Guide user to review extracted fields and submit.',
+      sigVerification && !sigVerification.IsMatch
+        ? 'Signature mismatch — email editor opened for escalation. User may still submit after review.'
+        : 'Guide user to review extracted fields and submit.',
     ].join(' ');
 
     await this.sendToSummarizer(summarizerInput, capturedToken);

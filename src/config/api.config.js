@@ -4,7 +4,7 @@ export const API_CONFIG = {
   signatureVerify: 'https://motilaloswal-dev.outsystems.app/PMSRedemptionSignatureVerify/rest/Redemption/Red_SignatureVerify',
   originalSignature: 'https://motilaloswal-dev.outsystems.app/PMSRedemptionDataExtraction/rest/RESTAPI1/RESTAPIMethod2',
   submitRequest: 'https://motilaloswal-dev.outsystems.app/PMSRedemptionDataExtraction/rest/RESTAPI1/RESTAPIMethod1',
-  sendEmail: 'https://monextdev.motilaloswal.com/PMSAPIService/rest/SendEmail/REST_API_SendEmail',
+  sendEmail: 'https://motilaloswal-dev.outsystems.app/PMSRedemptionSummmarizer/rest/Redemption/SendEmail',
   summarizer: 'https://motilaloswal-dev.outsystems.app/PMSRedemptionSummmarizer/rest/Redemption/Red_DataSummarizer',
 };
 
